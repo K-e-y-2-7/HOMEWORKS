@@ -11,7 +11,7 @@ def intexam (inp: str) -> int:
 def floatexam (inp: str) -> float:
         inp = str(inp)
         while True:
-            if inp.isdigit() == 1:
+            if inp.replace(".", "", 1).isdigit() == 1:
                 inp = float(inp)
                 break
             else:
