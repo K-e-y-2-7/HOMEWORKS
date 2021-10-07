@@ -1,8 +1,0 @@
-sqlite3 -column -header phone.sql.db
-CREATE TABLE names ( pk INTEGER PRIMARY KEY, name VARCHAR(64) NOT NULL, surname VARCHAR(64) NOT NULL);
-CREATE TABLE phones (pk INTEGER PRIMARY KEY, phone_number TEXT NOT NULL, fk INTEGER NOT NULL REFERENCES names(pk));
-.table
-INSERT INTO names(name, surname) values ('Kirill', 'Gorlach'), ('Viktoria', 'Pukhalskaya'), ('Mikhail', 'Kalashnik'), ('Sergey', 'Gorodilov');
-PRAGMA foreign_keys = 1;
-INSERT INTO phones (phone_number, fk) VALUES ('+380-66-123-45-67', 1), ('+380-66-987-65-43', 1), ('+380-95-123-45-67', 2), ('+380-66-123-98-76', 3), ('+380-95-987-65-43', 4);
-SELECT p.phone_number, n.name, n.surname FROM names n JOIN phones p ON n.pk = p.fk;
