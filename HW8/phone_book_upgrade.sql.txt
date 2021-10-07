@@ -1,0 +1,73 @@
+sqlite3 -header -column phone_book_upgrade30000.sql.db
+pragma foreign_keys=on;
+
+
+CREATE TABLE address (id INTEGER PRIMARY KEY, address VARCHAR (200) NOT NULL);
+INSERT INTO address (address) VALUES ('г. Харьков, р-он Московский, ст. метро Ак. Барабашова , ул. Спортивная, дом 9, подъезд 4, этаж 2, кв.79'),
+ ('г. Харьков, р-он Шевченковский, ст. метро Алексеевская, ул. Ахсарова, дом 8, подъезд 1, этаж 7, кв.47'),
+ ('г. Харьков, р-он Индустриальный, ст. метро Индустриальная, ул. Ивана Каркача, дом 8');
+
+CREATE TABLE names (id INTEGER PRIMARY KEY, name VARCHAR(32) NOT NULL, surname VARCHAR(32) NOT NULL, age INTEGER NOT NULL);
+INSERT INTO names (name, surname, age) VALUES ('Пётр','Петров','23'),
+ ('Олег','Аксёнов','26'),
+ ('Иван','Иванов','28');
+
+CREATE TABLE email (id INTEGER PRIMARY KEY, email TEXT DEFAULT NULL, names_id INTEGER NOT NULL REFERENCES names(id));
+INSERT INTO email (email, names_id) VALUES ('', '3'),
+ ('PetrPetrov5@gmail.com', '1'),
+ ('OlegAksenov@mail.ua', '2'), ('Olegwork@gmail.com', '2');
+
+CREATE TABLE phone_number (id INTEGER PRIMARY KEY, phone_number VARCHAR(20) NOT NULL, names_id INTEGER NOT NULL REFERENCES names(id));
+INSERT INTO phone_number (phone_number, names_id) VALUES ('+380-66-764-85-24', '3'),
+ ('+380-93-757-38-73', '2'), ('+380-66-585-33-91', '2'),
+ ('+380-50-813-29-87', '1'), ('+380-95-991-17-59', '1');
+
+CREATE TABLE department (id INTEGER PRIMARY KEY, title VARCHAR(32), description TEXT);
+INSERT INTO department (title, description) VALUES ('Безработный', 'Безработный'),
+ ('IT', 'Разработка ПО'),
+ ('Отдел продаж', 'Продажа товаров');
+
+
+CREATE TABLE work (id INTEGER PRIMARY KEY,
+ place_of_work TEXT DEFAULT ('Безработный'),
+ job_title  VARCHAR(24) DEFAULT ('Безработный'),
+ department_id INTEGER NOT NULL REFERENCES department(id));
+INSERT INTO work (place_of_work, job_title, department_id) VALUES ('', '', '1'),
+ ('CHI SOFTWARE DEVELOPMENT CENTER', 'JSE', '2'),
+ ('Интернет магазин Розетка', 'Менеджер', '3');
+
+
+SELECT * FROM address;
+SELECT * FROM names;
+SELECT e.id, n.name,  n.surname, n.age, e.email
+ FROM email e
+ JOIN names n ON e.names_id = n.id;
+SELECT pn.id, n.name,  n.surname, n.age, pn.phone_number
+ FROM phone_number pn
+ JOIN names n ON pn.names_id = n.id;
+SELECT * FROM department;
+SELECT w.id, w.place_of_work, w.job_title, d.title, d.description
+ FROM work w
+ JOIN department d ON w.department_id = d.id;
+
+
+CREATE TABLE person_data (id INTEGER PRIMARY KEY,
+phone_number_id  INTEGER NOT NULL REFERENCES phone_number(id),
+email_id INTEGER NOT NULL REFERENCES email(id),
+work_id INTEGER NOT NULL REFERENCES work(id),
+address_id INTEGER NOT NULL REFERENCES address(id));
+
+INSERT INTO person_data (phone_number_id, email_id, work_id, address_id) VALUES ('1', '1', '1', '3'),
+ ('2', '3', '2', '2'), ('3', '4', '2', '2'),
+ ('4', '2', '3', '1'), ('5', '2', '3', '1');
+
+.tables
+
+SELECT pd.id, n.name, n.surname, n.age, pn.phone_number, e.email, w.place_of_work, w.job_title, d.title, d.description, a.address 
+ FROM person_data pd
+ JOIN phone_number pn ON pd.phone_number_id = pn.id
+ JOIN names n ON pn.names_id = n.id
+ JOIN email e ON pd.email_id = e.id
+ JOIN work w ON pd.work_id = w.id
+ JOIN department d ON w.department_id = d.id
+ JOIN address a ON pd.address_id = a.id;
