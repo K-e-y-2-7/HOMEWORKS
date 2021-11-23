@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ARTICLES</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+    </head>
+    <body style="background-color: rgb(192, 178, 153); color: rgb(255, 255, 255);">
+            {% extends 'base.html' %}
+            {% block content %}
+              
+                {% for art in article %}
+                <div class="position-relative"> 
+                <div style = 'margin-left: auto; margin-right: auto; width: 100em'>
+                    <div class="col-md-12 col-sm-12 shadow-lg p3 mb-5 bg-body rounded " style = 'color: rgb(0, 0, 0);'>                    
+                        <div class='col-md-11 col-sm-12' style="margin-left: auto; margin-right: auto; width: 90em">                           
+                            <h2>{{art.headline}}</h2>
+                            <br>
+                            <div>{{art.text}}</div>
+                            <div style="margin-left: auto; width: 8em">
+                                {% for l in like %}
+                                 {% if l.article.id == art.id %}
+                                    <img src="https://img.icons8.com/material/24/000000/facebook-like--v1.png"/>
+                                    {{l}}
+                                 {% endif %}   
+                                {% endfor %}
+                                {% for d in dislike %}
+                                 {% if d.article.id == art.id %}
+                                    <img src="https://img.icons8.com/material/24/000000/thumbs-down--v1.png"/>
+                                    {{d}}
+                                 {% endif %}   
+                                {% endfor %}
+                            </div>
+                            <br>
+                                {% for com in comment %}
+                                    <div class="col-md-11 col-sm-12 shadow-lg p4 mb-5 bg-body rounded"  style = 'background-color: rgb(93, 93, 93);'>
+                                    {% if com.article.id == art.id %}
+                                        <p style="margin-left: 1%; width: 90em" >  {{com}} </p><br>
+                                        {% for c in comment %}
+                                            {% if c.comment.id == com.id %}
+                                            <div class="col-md-11 col-sm-12 shadow-lg p4 mb-5 bg-body rounded"  style = 'background-color: rgb(93, 93, 93);'>
+                                                <p style="margin-left: 5%; width: 90em">{{c}}</p><br>
+                                            <div style="margin-left: auto; width: 8em">
+                                                {% for l in like %}
+                                                 {% if l.comment.id == c.id %}
+                                                    <img src="https://img.icons8.com/material/24/000000/facebook-like--v1.png"/>
+                                                    {{l}}
+                                                 {% endif %}   
+                                                {% endfor %}
+                                                {% for d in dislike %}
+                                                 {% if d.comment.id == c.id %}
+                                                    <img src="https://img.icons8.com/material/24/000000/thumbs-down--v1.png"/>
+                                                    {{d}}
+                                                 {% endif %}   
+                                                {% endfor %}
+                                            </div>
+                                            </div>
+                                            
+                                            {% endif %} 
+                                            
+                                        {% endfor %}
+                                        <div style="margin-left: auto; width: 8em">
+                                            {% for l in like %}
+                                             {% if l.comment.id == com.id %}
+                                                <img src="https://img.icons8.com/material/24/000000/facebook-like--v1.png"/>
+                                                {{l}}
+                                             {% endif %}   
+                                            {% endfor %}
+                                            {% for d in dislike %}
+                                             {% if d.comment.id == com.id %}
+                                                <img src="https://img.icons8.com/material/24/000000/thumbs-down--v1.png"/>
+                                                {{d}}
+                                             {% endif %}   
+                                            {% endfor %}
+                                        </div>       
+                                    {% endif %}
+                                    </div>
+                                {% endfor %}                           
+                        </div>
+                            <div style="margin-left: auto; width: 18em">
+                                <div  style="margin-left: auto; width: 6em"> Articles id: {{art.id}}</div>
+                                <div  style="margin-left: auto; width: 6em"> Author: {{art.author}}</div>
+                                <div  style="margin-left: auto; width: 9em"> Genre: {{art.genre}}</div>    
+                                <div> Date of update: {{art.created_at}}</div>
+                                <div> Date of public: {{art.updated_at}}</div>
+                            </div>
+                            
+                    </div>   
+                </div>
+                </div> 
+                {% endfor %} 
+            {% endblock %}
+    </body>
+</html>
