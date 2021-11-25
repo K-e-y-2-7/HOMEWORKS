@@ -1,9 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-
-from datetime import datetime
 import random
 import string
+from datetime import datetime
+
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.shortcuts import render
+
 from .models import Author, Reader, Book, Article, AuthorArticle, Like, DisLike, Comment
 
 
@@ -26,6 +28,7 @@ users_dict = {
         'user10': 'Влад',
         'user11': 'Кирилл',
     } 
+
 
 def home(request):
     list_for_random = range(100)
@@ -58,16 +61,17 @@ def book_library(request):
     books = Book.objects.order_by('title')
     authors = Author.objects.all()
     readers= Reader.objects.all()
-    return render (request, 'BookLibrary.html',{
+    return render (request, 'book_library.html',{
        'books' : books,
        'authors' : authors,
        'readers' : readers
     })
 
+
 def articles(request):
     article = Article.objects.all()
     authors = AuthorArticle.objects.all()
-    comment= Comment.objects.all()
+    comment= Comment.objects.filter(comment__range = (-5, -1))
     like = Like.objects.all()
     dislike= DisLike.objects.all()
 
@@ -77,6 +81,43 @@ def articles(request):
         'comment': comment,
         'like': like,
         'dislike': dislike,
+    })
+
+
+def last_five_сomments(request):
+    comment= Comment.objects.order_by('-id')[:5]
+
+    return render (request, 'last_five_сomments.html',{        
+        'comment': comment,
+    })
+
+
+def five_comments (request):
+    default_user = User.objects.get(id=1)
+    comment1 = Comment.objects.create( text='Start of this comment. Some text...', user = default_user )
+    comment2 = Comment.objects.create( text='A large comment ... ', user = default_user)
+    comment3 = Comment.objects.create( text='Some text .. here is Middle of this comment. Some random text ...', user = default_user)
+    comment4 = Comment.objects.create( text='Some random text...', user = default_user)
+    comment5 = Comment.objects.create( text='Some text... Here the comment Finish.', user = default_user)
+
+    #Comment.objects.filter(text__istartswith = 'Start').update(text = 'bla-bla')
+    #Comment.objects.filter(text__iendswith = 'Finish.').update(text = 'ta-ta-ta') 
+    #Comment.objects.filter(text__icontains='k').exclude(text__icontains='c').delete()
+
+    #Comment.objects.filter(сomment__user__id ='1').exclude(text__icontains='some').filter(created_at__gte__=datetime.today)
+    return render (request, 'five_comments.html',{        
+        'comment1': comment1,
+        'comment2': comment2,
+        'comment3': comment3,
+        'comment4': comment4,
+        'comment5': comment5,
+    })
+
+def сomment_one_year_ago(request):
+    comment= Comment.objects.order_by('-id')[:5]
+
+    return render (request, 'сomment_one_year_ago.html',{        
+        'comment': comment,
     })
 
 
@@ -97,3 +138,21 @@ def  article_in_list(request, article_number, slug_text=''):
 
 def regex(request, text):
     return HttpResponse(f"it's regexp with text: {text}")
+
+
+def two_сomments_of_article(request):
+    author_art = AuthorArticle.objects.order_by('-pseudonym')[:1]
+    for elem in author_art:
+        author_art = elem.name
+    
+    article = article = Article.objects.filter(author__pseudonym__icontains = author_art)
+
+    comment= Comment.objects.filter(article__author__pseudonym__icontains=author_art).order_by('created_at')[:2]
+    return render (request, 'two_сomments_of_article.html',{        
+        'author_art': author_art,
+        'comment': comment,
+        'article' : article
+    })
+
+
+

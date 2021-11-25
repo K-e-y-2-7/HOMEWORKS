@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from .models import Author, Reader, Book, Article, AuthorArticle, Like, DisLike, Comment
 
 admin.site.register(Author)

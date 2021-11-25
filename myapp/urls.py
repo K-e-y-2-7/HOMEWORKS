@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import articles, archive_article, article_in_list, article_in_archive
+from .views import archive_article, article_in_list, article_in_archive, articles
 
 
 urlpatterns = [
